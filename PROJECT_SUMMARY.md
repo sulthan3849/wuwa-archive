@@ -270,6 +270,46 @@ for ($i = 0; $i -lt $bytes.Length; $i++) {
 
 ---
 
+## 7.2 AI Session Guidelines (CRITICAL)
+
+> **IMPORTANT**: Always do Deep Research BEFORE writing code!
+
+### Research Workflow
+1. **Deep Research** - Search for existing solutions first
+   - Use web search for related projects (WuwaTracker, etc.)
+   - Check GitHub for similar implementations
+   - Read existing documentation
+
+2. **Deep Dive** - Inspect actual implementations
+   - Analyze how others solved the problem
+   - Study file formats, APIs, protocols
+   - Understand the root cause
+
+3. **Deep Thinking** - Synthesize and adapt
+   - Combine insights from multiple sources
+   - Adapt solutions to our codebase
+   - Document the learning
+
+### When NOT to do Deep Research
+- Simple factual questions
+- Well-known technical concepts
+- Tasks that are purely creative
+
+### When TO do Deep Research
+- Bugs that persist after multiple attempts
+- Technical problems with existing solutions
+- New integrations or APIs
+- Encryption/encoding issues
+- File format parsing
+
+### Example Search Queries
+- "WuwaTracker import.ps1 source code"
+- "Wuthering Waves Client.log XOR decryption"
+- "Kuro Games gacha log file format"
+- "Wuwa Archive alternative solutions"
+
+---
+
 ## 8. How to Continue Development
 
 ### 8.1 For Next AI Session
