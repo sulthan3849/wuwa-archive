@@ -13,7 +13,7 @@ import { db } from "@/lib/db/database"
 import { useStore } from "@/lib/store/useStore"
 import { useTranslations } from "next-intl"
 
-const BANNER_TYPES = [1, 2, 3, 4, 5, 6, 7]; // Novice, Standard Resonator, Standard Weapon, Featured Resonator, Featured Weapon, Beginner Choice, etc.
+const BANNER_TYPES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]; // All banner types including Cyberpunk collab
 
 export function ImportWizard() {
   const t = useTranslations('import')

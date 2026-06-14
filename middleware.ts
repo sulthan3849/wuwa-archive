@@ -10,7 +10,7 @@ import type { NextRequest } from 'next/server';
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
 const WINDOW_MS = 30 * 60 * 1000;  // 30 minutes
-const MAX_REQUESTS = 5;            // Max 5 import requests per window (per TSD)
+const MAX_REQUESTS = 100;            // Max 100 import requests per window (per user)
 
 export function middleware(request: NextRequest) {
   // Only rate-limit import API endpoints

@@ -60,6 +60,9 @@ export const BANNER_HISTORY: BannerPeriod[] = [
 
   // === Version 2.4 (current / upcoming) ===
   { startDate: '2025-06-19 10:00:00', endDate: '2025-07-10 09:59:59', featuredResonator: 'Scar', version: '2.4', phase: 1 },
+
+  // === Version 2.5 - Cyberpunk Collab ===
+  { startDate: '2025-07-10 10:00:00', endDate: '2025-07-31 09:59:59', featuredResonator: 'Cyberpunk Collab', version: '2.5', phase: 1 },
 ];
 
 /**
