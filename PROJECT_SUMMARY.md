@@ -245,6 +245,31 @@ super('WuwaArchiveDB');  // NOT 'wuwa-archive' (with hyphens)
 
 ---
 
+## 7.1 Critical Learning: Client.log XOR Encryption
+
+> **CRITICAL**: Kuro Games encrypts `Client.log` with XOR obfuscation!
+
+### How to Decrypt
+```powershell
+for ($i = 0; $i -lt $bytes.Length; $i++) {
+    $byte = [int]$bytes[$i]
+    if ((($byte -band 0x0F) % 2) -eq 1) {
+        $bytes[$i] = [byte]($byte -bxor 0xA5)
+    } else {
+        $bytes[$i] = [byte]($byte -bxor 0xEF)
+    }
+}
+```
+
+### File Locations
+- `Client.log`: `D:\Wuthering Waves Game\Client\Saved\Logs\Client.log`
+- `debug.log`: `D:\Wuthering Waves Game\Client\Binaries\Win64\ThirdParty\KrPcSdk_Global\KRSDKRes\KRSDKWebView\debug.log`
+
+### Reference
+- WuwaTracker already solved this: https://github.com/wuwatracker/wuwatracker
+
+---
+
 ## 8. How to Continue Development
 
 ### 8.1 For Next AI Session
