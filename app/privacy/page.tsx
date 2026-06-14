@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — Wuwa Archive",
@@ -81,12 +82,12 @@ export default function PrivacyPage() {
       </div>
 
       <div className="mt-12 pt-6 border-t border-border">
-        <a
+        <Link
           href="/"
           className="text-accent hover:underline"
         >
           ← Back to Home
-        </a>
+        </Link>
       </div>
     </div>
   );

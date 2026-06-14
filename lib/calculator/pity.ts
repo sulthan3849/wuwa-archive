@@ -1,8 +1,18 @@
 import { StoredPull } from '@/lib/db/database';
-import { STANDARD_5STAR_RESONATORS } from '@/lib/constants/standard-pool';
+import { STANDARD_5STAR_RESONATORS, type Standard5StarResonator } from '@/lib/constants/standard-pool';
 import { BANNER_HISTORY } from '@/lib/constants/banner-history';
 
 // === TYPES ===
+
+interface RawPull {
+  id?: string;
+  name: string;
+  qualityLevel: number;
+  resourceType: number;
+  resourceId?: number | string;
+  time: string;
+  isNew?: boolean;
+}
 
 export interface PityInfo {
   currentPity5: number;        // Distance since last 5★
@@ -61,7 +71,7 @@ export function calculatePityStats(
           const featured = getFeaturedCharacter(pull.time);
           if (featured && pull.name === featured) {
             wins++;
-          } else if (STANDARD_5STAR_RESONATORS.includes(pull.name as any)) {
+          } else if (STANDARD_5STAR_RESONATORS.includes(pull.name as Standard5StarResonator)) {
             losses++;
             guarantee = true;
           } else {
@@ -122,7 +132,7 @@ function getFeaturedCharacter(pullTime: string): string | null {
  * Sorts pulls ascending by time, adds pityCount, returns newest first
  */
 export function calculatePity(
-  pulls: any[],
+  pulls: RawPull[],
   playerUid: string,
   cardPoolType: number
 ): StoredPull[] {
@@ -144,7 +154,7 @@ export function calculatePity(
       name: pull.name,
       qualityLevel: pull.qualityLevel,
       resourceType: pull.resourceType,
-      resourceId: pull.resourceId || pull.name,
+      resourceId: typeof pull.resourceId === 'number' ? pull.resourceId : 0,
       time: pull.time,
       isNew: false,
       pityCount: currentPity,

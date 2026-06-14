@@ -1,5 +1,5 @@
 "use client"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
@@ -17,7 +17,6 @@ const BANNER_TYPES = [1, 2, 3, 4, 5, 6, 7]; // Novice, Standard Resonator, Stand
 
 export function ImportWizard() {
   const t = useTranslations('import')
-  const tCommon = useTranslations('common')
   const router = useRouter()
   const { setActiveUid } = useStore()
   
@@ -26,12 +25,8 @@ export function ImportWizard() {
   const [progress, setProgress] = useState(0)
   const [currentStepText, setCurrentStepText] = useState("")
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [scriptUrl, setScriptUrl] = useState("https://wuwa-archive.vercel.app/import.ps1")
+  const [scriptUrl] = useState(() => typeof window !== 'undefined' ? `${window.location.origin}/import.ps1` : '/import.ps1')
   const [copied, setCopied] = useState(false)
-
-  useEffect(() => {
-    setScriptUrl(`${window.location.origin}/import.ps1`)
-  }, [])
 
   const handleCopyScript = async () => {
     try {
@@ -125,11 +120,12 @@ export function ImportWizard() {
         router.push(`/${locale}/tracker`)
       }, 1000)
       
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      setErrorMsg(err.message === 'TOKEN_EXPIRED' 
+      const errorMessage = err instanceof Error ? err.message : String(err)
+      setErrorMsg(errorMessage === 'TOKEN_EXPIRED' 
         ? t('errors.tokenExpired')
-        : err.message || t('errors.networkError'))
+        : errorMessage || t('errors.networkError'))
       setIsImporting(false)
     }
   }

@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Terms of Service — Wuwa Archive",
@@ -30,7 +31,7 @@ export default function TermsPage() {
         <section>
           <h2 className="text-xl font-semibold mb-3">2. No Warranty</h2>
           <p className="text-muted-foreground">
-            The service is provided "as is" without warranty of any kind.
+            The service is provided&nbsp;&ldquo;as is&rdquo;&nbsp;without warranty of any kind.
             We do not guarantee the accuracy of pull data, uninterrupted service,
             or fitness for any particular purpose.
           </p>
@@ -41,6 +42,7 @@ export default function TermsPage() {
           <p className="text-muted-foreground">
             While we strive to provide accurate pull statistics, we cannot
             guarantee 100% accuracy due to potential changes in the Kuro Games
+            {/* eslint-disable-next-line react/no-unescaped-entities */}
             API. Data from the game's Convene History is the source of truth.
           </p>
         </section>
@@ -83,12 +85,12 @@ export default function TermsPage() {
       </div>
 
       <div className="mt-12 pt-6 border-t border-border">
-        <a
+        <Link
           href="/"
           className="text-accent hover:underline"
         >
           ← Back to Home
-        </a>
+        </Link>
       </div>
     </div>
   );
