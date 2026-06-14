@@ -1,0 +1,307 @@
+{
+  "common": {
+    "appName": "Wuwa Archive",
+    "loading": "Memuat...",
+    "error": "Kesalahan",
+    "success": "Berhasil",
+    "cancel": "Batal",
+    "confirm": "Konfirmasi",
+    "save": "Simpan",
+    "delete": "Hapus",
+    "clear": "Bersihkan",
+    "export": "Ekspor",
+    "import": "Impor",
+    "settings": "Pengaturan",
+    "close": "Tutup",
+    "back": "Kembali",
+    "next": "Lanjut",
+    "retry": "Coba Lagi",
+    "copied": "Disalin!",
+    "copy": "Salin"
+  },
+  "nav": {
+    "tracker": "Pelacak",
+    "import": "Impor",
+    "settings": "Pengaturan",
+    "privacy": "Kebijakan Privasi",
+    "terms": "Ketentuan Layanan"
+  },
+  "landing": {
+    "title": "Selamat Datang di Wuwa Archive",
+    "subtitle": "Pelacak Pull & Analitik untuk Wuthering Waves",
+    "cta": "Mulai Melacak",
+    "features": {
+      "privacy": {
+        "title": "Privasi Local-First",
+        "description": "Data Anda tersimpan di browser Anda. Kami tidak pernah menyimpan apapun di server kami."
+      },
+      "pity": {
+        "title": "Pelacak Pity",
+        "description": "Lacak pity counter Anda dan tahu kapan 5★ berikutnya akan datang."
+      },
+      "stats": {
+        "title": "Statistik Pull",
+        "description": "Analisis pola pull Anda dengan statistik dan grafik detail."
+      },
+      "export": {
+        "title": "Ekspor & Impor",
+        "description": "Data Anda, kontrol Anda. Ekspor kapan saja, impor di mana saja."
+      }
+    },
+    "howItWorks": {
+      "title": "Cara Kerja",
+      "step1": "Jalankan script PowerShell untuk mendapatkan URL Convene",
+      "step2": "Tempelkan URL dan impor riwayat pull Anda",
+      "step3": "Lihat statistik, lacak pity, dan analisis keberuntungan Anda"
+    },
+    "ctaSecondary": "Impor Data Anda Sekarang"
+  },
+  "tracker": {
+    "title": "Pelacak Convene",
+    "profile": "Profil",
+    "noData": "Tidak Ada Data",
+    "noDataDescription": "Impor riwayat pull Anda untuk memulai!",
+    "goToImport": "Ke Halaman Impor",
+    "totalPulls": "Total Pull",
+    "pity": "Pity",
+    "avgPity": "Rata-rata Pity",
+    "pullRatio": "Rasio Pull",
+    "fiftyFifty": "Pelacak 50/50",
+    "guaranteeActive": "Guarantee Aktif",
+    "noFiftyFifty": "Belum ada data 50/50",
+    "getFirstFiveStar": "Dapatkan 5★ pertama Anda untuk mulai melacak!",
+    "winRate": "Tingkat Menang",
+    "wins": "Menang",
+    "losses": "Kalah",
+    "luckStatus": {
+      "lucky": "Beruntung",
+      "average": "Sedang",
+      "unlucky": "Sial"
+    },
+    "emptyState": {
+      "title": "Tidak ada data pull untuk banner ini",
+      "description": "Anda belum pernah pull di banner ini."
+    },
+    "onboarding": {
+      "title": "Belum Ada Data",
+      "description": "Impor pull pertama Anda untuk memulai!",
+      "cta": "Impor Riwayat Pull"
+    },
+    "pityStatus": {
+      "safe": "Aman",
+      "caution": "Perhatian",
+      "danger": "Bahaya"
+    },
+    "table": {
+      "pullNumber": "#",
+      "item": "Item",
+      "type": "Tipe",
+      "pity": "Pity",
+      "time": "Waktu",
+      "resonator": "Resonator",
+      "weapon": "Senjata"
+    },
+    "stats": {
+      "fiveStars": "5★",
+      "fourStars": "4★",
+      "threeStars": "3★",
+      "totalFiveStars": "Total 5★",
+      "averagePityDescription": "Rata-rata pull yang dibutuhkan untuk 5★"
+    },
+    "serverReset": "Reset Server dalam"
+  },
+  "import": {
+    "title": "Impor Riwayat Pull",
+    "subtitle": "Pilih platform Anda untuk memulai",
+    "platform": {
+      "windows": "Windows",
+      "android": "Android"
+    },
+    "windows": {
+      "instructions": {
+        "title": "Cara mendapatkan URL Convene",
+        "step1": "Buka game Wuthering Waves",
+        "step2": "Buka Convene History (riwayat pull) di dalam game",
+        "step3": "Buka PowerShell, tempel perintah di bawah, dan tekan Enter"
+      },
+      "powershell": {
+        "title": "Perintah PowerShell",
+        "copied": "Perintah disalin!"
+      },
+      "or": "ATAU",
+      "uploadLog": {
+        "title": "Unggah Client.log",
+        "description": "Seret dan letakkan file Client.log Anda di sini, atau klik untuk memilih",
+        "fileLocation": "Lokasi file: [Game]\\Client\\Saved\\Logs\\Client.log",
+        "maxSize": "Ukuran maksimal file: 5MB"
+      }
+    },
+    "android": {
+      "instructions": {
+        "title": "Cara mendapatkan URL Convene di Android",
+        "step1": "Buka Wuthering Waves di Android",
+        "step2": "Buka Convene History di dalam game",
+        "step3": "Tunggu halaman memuat sepenuhnya",
+        "step4": "Aktifkan Mode Pesawat",
+        "step5": "Pindah ke tab banner lain - halaman akan menampilkan ERROR",
+        "step6": "Tekan lama pada URL di halaman error dan salin"
+      }
+    },
+    "urlInput": {
+      "placeholder": "Tempelkan URL Convene di sini...",
+      "valid": "URL valid",
+      "invalid": "URL bukan dari Convene History",
+      "empty": "Silakan tempelkan URL Convene Anda"
+    },
+    "importButton": "Impor Data",
+    "importing": "Mengimpor...",
+    "progress": {
+      "fetching": "Mengambil {banner}...",
+      "complete": "Impor selesai!",
+      "total": "Total: {count} pull dari {banners} banner"
+    },
+    "errors": {
+      "tokenExpired": "URL sudah kedaluwarsa. Buka Convene History di game dan jalankan script lagi untuk mendapatkan URL baru.",
+      "networkError": "Tidak dapat terhubung ke server. Periksa koneksi internet Anda dan coba lagi.",
+      "invalidUrl": "URL tidak valid. Pastikan URL berasal dari halaman Convene History di game.",
+      "rateLimited": "Terlalu banyak permintaan. Silakan coba lagi dalam {seconds} detik.",
+      "serverError": "Server game sedang bermasalah. Silakan coba lagi nanti.",
+      "noData": "Tidak ada data pull ditemukan untuk banner ini. Ini normal jika Anda belum pernah pull di banner ini."
+    },
+    "success": {
+      "title": "Impor Berhasil!",
+      "message": "Berhasil mengimpor {count} pull dari {banners} banner.",
+      "redirecting": "Mengalihkan ke pelacak..."
+    },
+    "summary": {
+      "success": "{successCount}/{totalCount} banner berhasil diimpor",
+      "failed": "{failedCount} banner gagal"
+    }
+  },
+  "settings": {
+    "title": "Pengaturan",
+    "subtitle": "Kelola profil dan data Anda.",
+    "profile": {
+      "title": "Profil Aktif",
+      "description": "Profil pemain Anda saat ini.",
+      "playerUid": "Player UID",
+      "server": "Server",
+      "totalPulls": "Total Pull",
+      "lastImport": "Impor Terakhir",
+      "never": "Belum pernah",
+      "noProfile": "Tidak ada data profil. Impor riwayat pull Anda terlebih dahulu."
+    },
+    "dataManagement": {
+      "title": "Kelola Data",
+      "description": "Ekspor data Anda untuk backup, atau impor arsip yang sudah ada.",
+      "export": {
+        "button": "Ekspor JSON",
+        "success": "Data berhasil diekspor!",
+        "error": "Ekspor gagal"
+      },
+      "import": {
+        "button": "Impor JSON",
+        "success": "Impor berhasil!",
+        "error": "Impor gagal",
+        "newRecords": "Data baru",
+        "duplicates": "Duplikat"
+      }
+    },
+    "dangerZone": {
+      "title": "Zona Berbahaya",
+      "description": "Hapus semua data lokal secara permanen.",
+      "clearButton": "Hapus Semua Data",
+      "confirmTitle": "Apakah Anda yakin?",
+      "confirmMessage": "Semua data pull untuk UID {uid} akan dihapus permanen dari browser ini. Tindakan ini tidak dapat dibatalkan.",
+      "confirmDelete": "Konfirmasi Hapus",
+      "success": "Semua data berhasil dihapus",
+      "error": "Gagal menghapus data"
+    }
+  },
+  "fiftyFifty": {
+    "title": "Pelacak 50/50",
+    "wins": "Menang",
+    "losses": "Kalah",
+    "winRate": "Tingkat Menang",
+    "guarantee": "GUARANTEE",
+    "active": "Guarantee Aktif",
+    "inactive": "50/50 Aktif",
+    "noData": "Belum ada data 50/50",
+    "getFirstFiveStar": "Dapatkan 5★ pertama Anda untuk mulai melacak!"
+  },
+  "toast": {
+    "exportSuccess": "Data berhasil diekspor!",
+    "exportError": "Gagal mengekspor data",
+    "importSuccess": "Impor berhasil!",
+    "importError": "Gagal mengimpor data",
+    "clearSuccess": "Data berhasil dihapus",
+    "clearError": "Gagal menghapus data",
+    "profileSwitch": "Beralih ke profil {uid}",
+    "copySuccess": "Disalin ke clipboard!",
+    "copyError": "Gagal menyalin"
+  },
+  "footer": {
+    "disclaimer": "Wuwa Archive — Tidak berafiliasi dengan Kuro Games",
+    "version": "Versi"
+  },
+  "privacy": {
+    "title": "Kebijakan Privasi",
+    "effectiveDate": "Tanggal Efektif",
+    "sections": {
+      "dataCollection": "Pengumpulan Data",
+      "dataCollectionText": "Kami TIDAK mengumpulkan data pribadi apapun. Semua data riwayat pull Anda disimpan secara lokal di IndexedDB browser Anda dan tidak pernah dikirim ke server kami.",
+      "localStorage": "Penyimpanan Lokal",
+      "localStorageText": "Semua data disimpan di browser Anda. Anda memiliki kendali penuh atas data Anda dan dapat menghapusnya kapan saja dari halaman Pengaturan.",
+      "proxyServer": "Server Proxy",
+      "proxyServerText": "Server kami hanya bertindak sebagai proxy tipis untuk mengambil data dari API Kuro Games. Kami tidak menyimpan, mencatat, atau mempertahankan data apapun yang melewati server kami.",
+      "cookies": "Cookie",
+      "cookiesText": "Kami hanya menggunakan cookie untuk preferensi UI seperti tema (mode gelap/terang) dan pengaturan bahasa. Tidak ada cookie pelacakan atau cookie analitik yang digunakan.",
+      "thirdParty": "Layanan Pihak Ketiga",
+      "thirdPartyText": "Kami tidak menggunakan layanan analitik atau pelacakan pihak ketiga apapun. Tidak ada Google Analytics, Mixpanel, atau alat serupa di situs web ini.",
+      "dataDeletion": "Penghapusan Data",
+      "dataDeletionText": "Anda dapat menghapus semua data Anda kapan saja dari halaman Pengaturan. Menghapus data browser juga akan menghapus semua informasi yang tersimpan."
+    }
+  },
+  "terms": {
+    "title": "Ketentuan Layanan",
+    "effectiveDate": "Tanggal Efektif",
+    "sections": {
+      "disclaimer": "Penafian",
+      "disclaimerText": "Wuwa Archive tidak berafiliasi dengan, tidak didukung oleh, atau terhubung dengan Kuro Games atau Wuthering Waves dengan cara apapun. Ini adalah proyek independen, open-source yang dibuat oleh fans untuk fans.",
+      "noWarranty": "Tanpa Jaminan",
+      "noWarrantyText": "Layanan disediakan \"sebagaimana adanya\" tanpa jaminan apapun. Kami tidak menjamin keakuratan data atau layanan yang tidak terganggu.",
+      "dataAccuracy": "Akurasi Data",
+      "dataAccuracyText": "Kami berusaha wajar untuk memastikan akurasi data, tetapi kami tidak dapat menjamin bahwa semua catatan pull tercapture atau bahwa statistik 100% akurat.",
+      "accountSafety": "Keamanan Akun",
+      "accountSafetyText": "Script PowerShell kami hanya membaca file log dan tidak memodifikasi file game apapun. Ini tidak dapat digunakan untuk mendapatkan keuntungan atau membahayakan keamanan akun.",
+      "openSource": "Open Source",
+      "openSourceText": "Kode sumber tersedia di GitHub di bawah lisensi GPL-3.0. Anda dipersilakan untuk mengaudit kode untuk transparansi.",
+      "userResponsibility": "Tanggung Jawab Pengguna",
+      "userResponsibilityText": "Anda bertanggung jawab untuk menjaga keamanan backup data Anda. Meskipun kami mengimplementasikan deduplikasi, kami merekomendasikan ekspor reguler data Anda."
+    }
+  },
+  "errors": {
+    "generic": "Terjadi kesalahan. Silakan coba lagi.",
+    "network": "Kesalahan jaringan. Periksa koneksi Anda.",
+    "notFound": "Halaman tidak ditemukan",
+    "serverError": "Kesalahan server. Silakan coba lagi nanti."
+  },
+  "time": {
+    "justNow": "Baru saja",
+    "minutesAgo": "{count} menit yang lalu",
+    "hoursAgo": "{count} jam yang lalu",
+    "daysAgo": "{count} hari yang lalu",
+    "weeksAgo": "{count} minggu yang lalu",
+    "monthsAgo": "{count} bulan yang lalu"
+  },
+  "banners": {
+    "1": "Novice Convene",
+    "2": "Permanent Resonator",
+    "3": "Permanent Weapon",
+    "4": "Featured Resonator",
+    "5": "Featured Weapon",
+    "6": "Beginner's Choice",
+    "7": "New Voyage Resonator",
+    "8": "New Voyage Weapon"
+  }
+}

@@ -1,0 +1,214 @@
+﻿Arsitektur Sistem dan Analisis Fungsional Pelacak Gacha: Formulasi PRD, FSD, dan TSD Berbasis Kecerdasan Buatan untuk Platform WuWa Tracker
+Pergeseran paradigma dalam siklus hidup pengembangan perangkat lunak (Software Development Life Cycle - SDLC) saat ini mengarah pada model pengawasan arsitektural yang digerakkan sepenuhnya oleh kecerdasan buatan (Artificial Intelligence - AI).1 Dalam ekosistem ini, peran manusia bergeser dari pembuat sintaksis kode manual menjadi arsitek sistem yang mengorkestrasi agen model bahasa besar (Large Language Models - LLM) melalui metodologi rekayasa konteks yang sangat kaku.1 Analisis mendalam terhadap platform analitik permainan video pihak ketiga, khususnya WuWa Tracker yang melayani basis pemain Wuthering Waves, menghadirkan studi kasus yang luar biasa kompleks mengenai ekstraksi data asinkron, pengelolaan basis data relasional, dan visualisasi statistik waktu nyata.2
+Laporan ini menyajikan dekonstruksi komprehensif mengenai fungsionalitas inti WuWa Tracker—khususnya fitur Pelacak Pull (Pull Tracker) dan Impor Riwayat Pull (Pull History Import)—serta memformulasikan spesifikasi arsitektural tersebut ke dalam tiga dokumen fundamental: Project Requirements Document (PRD), Functional Specification Document (FSD), dan Technical Specification Document (TSD). Formulasi ini dirancang secara spesifik untuk diinjeksi sebagai "sumber kebenaran" (source of truth) ke dalam Lingkungan Pengembangan Berbasis Agen (Agent-Based IDEs), memandu LLM untuk mensintesis seluruh tumpukan aplikasi tanpa mengalami halusinasi atau penyimpangan logika.1
+Dekonstruksi Mekanika Gacha dan Kebutuhan Agregasi Data
+Ekosistem ekonomi dalam Wuthering Waves diatur oleh algoritme probabilitas yang ketat yang dikenal sebagai sistem "Convene" atau gacha.3 Dalam sistem ini, probabilitas keberhasilan pemain dalam memperoleh karakter atau senjata tingkat tinggi (bintang 5) tidak bersifat statis, melainkan dimodulasi oleh sistem jaminan atau pity system.4 Pemahaman matematis terhadap sistem ini merupakan fondasi utama sebelum agen kecerdasan buatan dapat diperintahkan untuk membangun logika backend pelacak.
+Model Probabilitas dan Jaminan Batas Akhir (Pity System)
+Analisis terhadap mekanika permainan mengungkapkan dua fase kritis dalam kurva probabilitas: soft pity dan hard pity.4 Hard pity adalah batas absolut di mana pemain dijamin seratus persen untuk mendapatkan entitas bintang 5, yang dalam Wuthering Waves ditetapkan pada tarikan (pull) ke-80 untuk spanduk karakter terbatas (Limited Character Banner) dan spanduk standar.4 Namun, yang mendasari kompleksitas pelacakan adalah fenomena soft pity, yaitu titik di mana probabilitas dasar mulai mengalami eskalasi eksponensial.4 Berdasarkan agregasi data global, soft pity ini terpicu secara konsisten mulai dari tarikan ke-65.4
+Model matematika piecewise berikut mendemonstrasikan probabilitas    untuk mendapatkan karakter bintang 5 pada tarikan ke-  :
+  
+
+Sistem permainan juga menerapkan mekanisme 50/50, di mana perolehan karakter bintang 5 pertama pada spanduk terbatas memiliki probabilitas 50% untuk menjadi karakter unggulan promosi.5 Jika pemain "kalah" dalam undian 50/50 ini dengan mendapatkan karakter standar, maka perolehan bintang 5 berikutnya dijamin 100% merupakan karakter unggulan.5 Fitur ini bersifat membagikan status jaminan lintas spanduk terbatas (shared pity), yang berarti akumulasi jaminan dari spanduk Karakter A akan terbawa secara linier ke spanduk Karakter B di masa mendatang.5
+Keterbatasan Antarmuka Internal dan Solusi Pelacakan Pihak Ketiga
+Kuro Games, pengembang Wuthering Waves, menyediakan antarmuka riwayat tarikan di dalam permainan. Namun, antarmuka ini memiliki kelemahan arsitektural yang signifikan bagi pemain tingkat lanjut: antarmuka ini tidak menjumlahkan tarikan secara otomatis, tidak memberikan visualisasi metrik probabilitas, dan yang paling fatal, data log ini dapat kedaluwarsa atau terhapus setelah siklus waktu enam bulan.6 Ketiadaan fungsi persistensi permanen inilah yang melahirkan kebutuhan absolut akan platform seperti WuWa Tracker.
+WuWa Tracker menyelesaikan asimetri informasi ini dengan mengagregasi data mentah menjadi metrik yang persisten.2 Fitur Pelacak Pull di platform ini secara otonom menghitung jarak pemain menuju hard pity. Platform ini juga memperkenalkan indikator evaluasi keberuntungan (luck indicators) yang menggunakan pengkodean warna visual; misalnya, warna merah mengindikasikan bahwa pemain harus mencapai angka probabilitas tinggi (tidak beruntung) untuk memperoleh karakter, sementara warna emas mengindikasikan keberhasilan di bawah ambang batas soft pity. Fitur ini beroperasi dengan membagi data ke dalam beberapa direktori antarmuka spanduk, seperti Weapon Convene, Novice Convene, dan Character Event Convene, memungkinkan isolasi analitik yang presisi.
+Topologi Ekstraksi Data: Memintas Isolasi Klien-Server
+Tantangan arsitektural terbesar dalam membangun WuWa Tracker adalah ketiadaan Antarmuka Pemrograman Aplikasi (API) publik atau protokol otorisasi terbuka (seperti OAuth) dari pihak pengembang permainan. Untuk memecahkan masalah ini, platform harus mengeksploitasi mekanisme rendering internal permainan itu sendiri.6
+Permainan tidak menyimpan seluruh basis data riwayat di penyimpanan lokal (client-side). Sebaliknya, setiap kali pemain membuka menu riwayat, permainan memicu sebuah jendela peramban web internal (webview) yang terhubung langsung ke server pusat Kuro Games.6 Jendela webview ini melakukan permintaan pemanggilan dengan melampirkan Uniform Resource Locator (URL) yang sangat spesifik, yang berfungsi sebagai kredensial autentikasi sementara.6
+Struktur anatomi URL ini dapat didekonstruksi sebagai berikut 6: https://aki-gm-resources-oversea.aki-game.net/aki/gacha/index.html#/record?svr_id=&player_id=&lang=[LANGUAGE]&gacha_id=&gacha_type=&svr_area=global&record_id=&resources_id=&platform=
+Keberadaan parameter record_id dan player_id dalam URL ini beroperasi sebagai token sesi (session token) yang memvalidasi identitas klien untuk mengakses muatan data JSON yang berada di backend.6 Namun, karena token ini bersifat membusuk seiring waktu (time-decaying) untuk memitigasi serangan pengulangan (replay attacks), proses ekstraksi harus diotomatisasi sedemikian rupa sehingga pengguna dapat menarik URL tersebut sebelum masa berlakunya habis.6 WuWa Tracker mendiferensiasikan metodologi ekstraksi ini ke dalam dua divisi operasi sistem utama: Lingkungan Windows dan Lingkungan Android.
+Arsitektur Ekstraksi Lingkungan Windows (Skrip PowerShell)
+Untuk pengguna sistem operasi PC, intervensi manual untuk mencari URL webview di antara puluhan ribu baris log permainan sangat rentan kesalahan. Oleh karena itu, WuWa Tracker menggunakan skrip otomasi yang ditulis dalam bahasa shell eksekusi tugas Windows PowerShell (import.ps1).3
+Arsitektur operasional skrip ini berlandaskan pada prinsip pemindaian memori persisten murni (read-only file traversal).3 Skrip tidak melakukan modifikasi atau injeksi terhadap berkas biner pelaksana (executable binaries) permainan, sehingga metode ini sepenuhnya mematuhi kebijakan anti-kecurangan (anti-cheat) permainan dan tidak menimbulkan risiko pemblokiran akun.9
+
+
+Fase Skrip PowerShell
+	Mekanisme Komputasi dan Resolusi Konflik
+	Inisialisasi & Pengaturan Lingkungan
+	Skrip memanggil Invoke-WebRequest dengan argumen rute -UseBasicParsing dan header tiruan @{"User-Agent"="Mozilla/5.0"} untuk mengambil blok kode sumber mentah dari repositori GitHub WuWa Tracker.7
+	Traversal Sistem Direktori
+	Skrip melakukan iterasi melintasi array jalur instalasi umum yang telah ditentukan sebelumnya (hardcoded paths). Rutinitas penelusuran ini memeriksa direktori klien mandiri (C:\Wuthering Waves\Wuthering Waves Game), partisi Epic Games (C:\Program Files\Epic Games\WutheringWavesj3oFh), dan infrastruktur Steam (C:\Steam\steamapps\common\Wuthering Waves).3 Mekanisme pencarian singgahan MUI Cache juga digunakan untuk deteksi Epic Games Store secara otomatis.3
+	Parsing Log Target
+	Setelah direktori Saved/Logs berhasil dipetakan, skrip berfokus pada dua target analitik file teks: Client.log dan debug.log.6 Skrip memanggil algoritme Ekspresi Reguler (Regex) untuk memindai blok teks dari bawah ke atas (reverse traversal), mencari kemunculan pertama dari string proksi URL https://aki-gm-resources-oversea.aki-game.net.6
+	Eksekusi Penangkapan
+	Jika kondisional Regex terpenuhi, seluruh string URL diisolasi. Skrip kemudian berinteraksi dengan API papan klip (clipboard) Windows melalui perintah Set-Clipboard, memungkinkan pengguna untuk memindahkan data URL secara transparan ke dalam antarmuka web platform.
+	Arsitektur Ekstraksi Lingkungan Android (Penyelesaian Sandbox)
+Sistem operasi seluler memperkenalkan pembatasan keamanan ruang pasir (sandboxing) yang intens. Sejak peluncuran arsitektur Scoped Storage pada versi Android moderen, aplikasi pihak ketiga kehilangan otorisasi untuk membaca visibilitas partisi penyimpanan root /Android/data/.12 Keterbatasan direktori sistem ini—khususnya pada ruang gema paket aplikasi com.kurogame.wutheringwaves.global—memaksa penerapan tiga metode ekstraksi heterogen bagi perangkat seluler.13
+1. Interupsi Jaringan Asinkron (Mode Pesawat / Airplane Mode): Metodologi ini merupakan bentuk eksploitasi peramban yang menawan. Webview tidak dapat menyembunyikan parameter URL-nya ketika modul resolusi Domain Name System (DNS) gagal merender paket data kembali. Pengguna mengaktifkan koneksi masuk, memulai fungsi rendering antarmuka riwayat di dalam permainan, dan sepersekian milidetik sebelum klien bernegosiasi dengan handshake server proksi, pengguna secara manual memutuskan saklar transmisi radio jaringan (Mode Pesawat).13 Akibatnya, mesin rendering gagal (timeout), melepaskan bingkai antarmuka, dan menampilkan halaman kesalahan internal peramban Android yang secara lugas menampilkan URL pemanggilan lengkap di bagian atas bilah alamat, siap disalin ke papan klip.15
+2. Ekstraksi Forensik Log Manual (Client.log): Pendekatan ini merupakan duplikasi primitif dari fungsionalitas skrip PowerShell, yang bergantung pada alat utilitas eksternal. Pengguna yang memiliki hak istimewa root, pengelola file dengan injeksi sesi Android Debug Bridge (ADB), atau antarmuka Shizuku 16, dapat menembus protokol Scoped Storage.12 File log diekstraksi dari jalur memori internal absolut: Internal shared storage\Android\data\com.kurogame.wutheringwaves.global\files\UE4Game\Client\Client\Saved\Logs\Client.log.12 Berkas berukuran besar ini diunggah langsung melalui antarmuka web /id/import?platform=android&method=log, di mana parser komputasi sisi klien akan mengurai string URL yang tertanam di dalamnya.14
+3. Analisis Paket Proksi Lokal (Aplikasi Ascent): Strategi ekstraksi Android paling mutakhir bergantung pada implementasi jaringan perangkat lunak perantara (Man-in-the-Middle) di tingkat area lokal. Pendekatan ini secara spesifik menggunakan aplikasi sumber terbuka bernama Ascent v2.1.6 (dengan batasan kompatibilitas untuk sistem Android 11 ke atas).13 Ascent menggunakan sertifikat kontrol lalu lintas otorisasi untuk membangun koneksi Jaringan Pribadi Virtual (VPN) pasif di ruang penyimpanan lokal.18 Ketika modul webview Wuthering Waves melakukan pemanggilan data dari server aki-gm-resources, Ascent mencegat lalu lintas hiperteks tersandi, mendekripsi parameter sesi URL dari tajuk (header) permintaan HTTP, menampilkannya ke layar analitik, lalu meneruskan paketnya sehingga permainan tetap berjalan lancar.13 Alur lalu lintas ini meniadakan keharusan navigasi sistem root atau manipulasi ketangkasan manual (seperti Mode Pesawat).
+Sinkronisasi Otomatis dan Otentikasi Lintas Platform
+Eksekusi penangkapan URL hanyalah katalis awal. Fungsi utama dari WuWa Tracker terealisasi ketika titik akhir ekstraksi memanggil parser untuk mengambil muatan dari server.21 Struktur balasan dari API Kuro Games berbentuk serangkaian abstraksi daftar JSON (JavaScript Object Notation) yang sarat parameter.22 JSON ini memuat objek data yang melacak ID transaksi, klasifikasi karakter/senjata tingkat tinggi, referensi nilai langka (bintang 3, bintang 4, dan bintang 5), serta stempel waktu presisi.23
+Untuk menangani manajemen status dan mencegah hilangnya analisis probabilitas ketika pemain berganti perangkat dari PC ke seluler, WuWa Tracker menerapkan prosedur Sinkronisasi Awan (Cloud Sync).24 Protokol perlindungan kontinuitas data beroperasi dengan menautkan ID Pemain in-game (UID) dengan entitas otentikasi alamat surat elektronik (email) murni.7
+Keamanan basis data relasional dikelola secara asinkron. Apabila pemain mencoba menautkan URL player_id yang sebelumnya telah terikat dalam pemetaan skema basis data dengan alamat surel pengguna lain, algoritme pembersihan konflik WuWa Tracker akan menghapus tautan identitas surel lama (orphan link removal) dan mendirikan relasi deterministik pada identitas surel yang baru.7 Pada saat pengunggahan disetujui, setiap blok konfigurasi JSON—seperti entitas file wuwatracker-pulls.json atau entri metadata inventaris pada wuwatracker-profiles.json—dicadangkan (backed up) secara otomatis ke dalam kluster memori pangkalan data pusat, memastikan keamanan dari kegagalan sistem klien lokal.25
+Paradigma Pengembangan Berbasis Kecerdasan Buatan (Spec-Driven AI Development)
+Menerjemahkan abstraksi kompleks dari arsitektur probabilitas gacha, metodologi intersepsi URL dari aplikasi Ascent, dan pengelolaan status asinkron ke dalam sebuah aplikasi web yang dapat dibangun secara otonom oleh kecerdasan buatan, merupakan tantangan tingkat lanjut dalam rekayasa perangkat lunak.1 Secara historis, instruksi konvensional yang sederhana (sering disebut sebagai "zero-shot prompting") akan dengan cepat menghancurkan kohesi struktural sistem, menghasilkan apa yang dikenal sebagai "halusinasi AI".1 Agen LLM akan mulai merajut metodologi ekstraksi yang tidak mungkin, melupakan protokol autentikasi, atau menciptakan struktur basis data imajiner yang tidak memiliki landasan bahasa pemrograman yang logis.
+Untuk mengorkestrasi pengembangan platform seperti WuWa Tracker secara efisien menggunakan tumpukan alat kecerdasan buatan—seperti lingkungan Agent-Based IDE Anti Gravity atau Zed.dev, dan mengarahkan model bernalar spasial tingkat tinggi seperti Claude 3.5 Sonnet atau seri Gemini 1.5 Pro—insinyur manusia harus mengadopsi prinsip "Pengembangan Berbasis Spesifikasi" (Spec-Driven Development).1 Inti dari filosofi ini adalah Doktrin Rekayasa Konteks (Context Engineering).1
+Doktrin ini menuntut transformasi perencanaan arsitektural menjadi sebuah basis pengetahuan yang absolut (Source of Truth).1 Ini bukan dokumen Word pasif yang dibagikan antartim, melainkan deretan file Markdown (.md) yang diformulasikan secara programatik, kaku, tanpa ambiguitas, dan ditanamkan ke dalam penyimpanan memori persisten di direktori ruang kerja (workspace) agen AI.1 Apabila agen model bahasa mengalami de-sinkronisasi atau kebingungan sintaksis saat membangun komponen integrasi import.ps1, agen akan secara otonom melakukan kueri referensi balik ke dalam dokumen matriks ini.
+Untuk membangun infrastruktur lengkap fitur Pelacak Pull dan Impor Riwayat, dokumentasi matriks tersebut dibagi menjadi tiga tingkatan kendali arsitektural: Project Requirements Document (PRD), Functional Specification Document (FSD), dan Technical Specification Document (TSD).1 Formulasi berikut merupakan kerangka acuan (blueprint) fungsional yang dirancang khusus untuk memandu komputasi agen AI.
+Fase I: Formulasi Project Requirements Document (PRD)
+Dalam kerangka rekayasa konteks untuk pengembangan AI, fungsi eksklusif dari Project Requirements Document (PRD) adalah menjangkar pengekangan algoritmik dari deviasi ruang lingkup yang berlebihan.1 Instruksi kepada model obrolan awal (seperti ChatGPT atau Gemini dalam fase curah gagasan) mendikte bahwa file turunan (misalnya, prd.md) tidak boleh mengandung blok kode teknis yang dapat dieksekusi, melainkan harus mendefinisikan batasan semantik absolut dari masalah, target pengguna akhir, dan batas eksekusi fitur Minimum Viable Product (MVP).1
+Dokumen arsitektural PRD berikut dikonstruksi secara esensial untuk pembangunan WuWa Tracker dan harus direkatkan ke root directory dari ruang kerja AI:
+
+
+Arsitektur Kritis PRD
+	Resolusi Fungsionalitas Ekosistem
+	Rasionalisasi Psikologi Model LLM
+	Ringkasan Eksekutif & Definisi Masalah Sistemik
+	Masalah Primer: Mekanika gacha Wuthering Waves menerapkan probabilitas eskalasi otomatis (soft pity pada angka 65, hard pity pada 80) 4, tetapi UI in-game menyembunyikan visibilitas perhitungan log ini dan menghapus entri historis dari peladen setelah periode waktu enam bulan.6
+
+
+Solusi Taktis: Agregator analitik pihak ketiga terpusat yang mendekripsi URL webview internal, mengekstraksi data mentah permainan, dan menghasilkan matriks riwayat persisten yang diperkaya metrik visual yang dapat dibagikan kepada komunitas.
+	Menanamkan narasi operasional awal ke dalam memori sesi AI. Parameter ini mengkalibrasi pembobotan atensi komputasi agen agar tetap berada dalam ranah pelacakan utilitas gim, dan mencegah algoritme berhalusinasi menghasilkan fitur portal panduan permainan (wiki) yang tidak terkait dalam iterasi pertama.
+	Batas Fungsionalitas Minimum Viable Product (MVP)
+	Ruang Lingkup Eksekusi yang Amanat:
+
+
+1. Parser Antarmuka Input URL untuk ekstraksi data asinkron dari berbagai sumber lintas sistem operasi (Mode Pesawat Android, PowerShell Windows, skrip Client.log, dan aplikasi proksi Ascent).7
+
+
+2. Kalkulator Otonom Manajemen Probabilitas yang menampilkan penghitung jaminan batas akhir secara absolut lintas kategori spanduk (Karakter Acara, Senjata, Standar).27
+
+
+3. Relasi Penyimpanan Awan (Cloud Sync) melalui otorisasi Tautan Surel (Email Linking) untuk mencadangkan file wuwatracker-pulls.json.7
+	Mendikte manajemen pengalokasian siklus pemrosesan token (token limits constraint). Agen AI dilarang keras memulai perencanaan fitur pengecualian seperti utilitas timeline pelacakan acara (event planner) sampai stabilitas fungsi inti parser ekstraksi divalidasi.
+	Sistem Desain, Tema Visual, dan Filosofi Rendering
+	Estetika Murni (Brand Guidelines): Mengadopsi bahasa desain antarmuka Bento-grid yang diintegrasikan dengan manipulasi efek kaca buram (glassmorphism).1
+
+
+Palet Warna Otoritatif:
+
+
+- Basis Primer: Putih Gading (#fceee3).28
+
+
+- Aksen Emas/Kuning Spesifik: (#ddbf61) untuk memantulkan konvensi tingkat kelangkaan karakter bintang 5 internal Wuthering Waves.28
+
+
+Tipografi: Penggunaan rupa huruf (font) Sans-serif netral untuk keterbacaan data grid lebat, dilengkapi elemen spesifik untuk emulasi estetika "Solaris-3 Script" dalam elemen ornamen fiksi antarmuka.29
+	Menghindari konflik resolusi desain. Dengan menetapkan batasan kode HEX warna heksadesimal dan instruksi layout secara spesifik, probabilitas AI untuk mencampuradukkan paradigma desain grafis yang bertentangan (misalnya, tiba-tiba memanggil kerangka desain Material UI klasik ke dalam ekosistem estetika kontemporer Neumorphism) menjadi nol.
+	Topologi Aliran Interaksi Pengguna (User Journey Flow)
+	1. Entri Klien: Pengguna menavigasi ke titik tengah pendaratan /id/tracker. Jika basis data lokal atau relasi cookie berstatus kosong, rute dipaksa beralih ke direktori /id/import.27
+
+
+2. Klasifikasi Platform Eksekusi: Pengguna memfungsikan tombol rute untuk menentukan prosedur operasi sistem (Windows, Android, atau iOS).7
+
+
+3. Injeksi URL Ekstraksi: Pengguna menjalankan panduan ekstraksi skrip OS secara otonom untuk memperoleh URL otentikasi webview dan merekatkannya ke parameter bidang input antarmuka.27
+
+
+4. Verifikasi Output Analitik: Sistem memvalidasi ekspresi reguler tautan, mengekstrak parameter JSON, dan mentransisikan visual Pity Counter berbasis grafik palet emas/merah.
+	Memungkinkan LLM untuk mengkonstruksi model referensi topologi direktori asinkron di dalam kerangka kerja Next.js, bahkan jauh sebelum eksekusi penulisan satu blok kode perutean disintesis oleh mesin penalaran struktural.
+	Fase II: Formulasi Functional Specification Document (FSD)
+Setelah struktur semantik operasional diamankan di dalam prd.md, fase perencanaan yang berkolaborasi dengan kecerdasan buatan beralih ke aktivasi Mode Perencanaan (Plan Mode) di dalam lingkungan Agent-Based IDE.1 Functional Specification Document (FSD) mengatur translasi dari batasan produk menjadi cetak biru teknis arsitektur antarmuka klien (Frontend).1
+Dokumen FSD, yang diartikulasikan dan disetujui bersama agen kecerdasan buatan, mengamanatkan penggunaan tumpukan teknologi modern yang sangat ramah terhadap AI (AI-Optimized Tech Stack). Ekosistem dominan Next.js dan React digabungkan dengan utilitas presentasi Tailwind CSS dipilih karena memiliki korpus pelatihan data masif yang memungkinkan AI merakit komponen direktori tata letak dengan tingkat kesalahan hampir absolut nol.1 Dokumen referensi FSD fsd.md yang harus dipatuhi adalah sebagai berikut:
+
+
+Anatomi Spesifikasi FSD
+	Parameter Komputasi Frontend Deterministik
+	Pengekangan Arsitektural untuk Model AI
+	Gambaran Struktur Repositori Terisolasi
+	Ekosistem dibangun di atas arsitektur Next.js 15 (App Router).30 Struktur Monorepo diimplementasikan secara global untuk memastikan simetri referensi antara lingkungan tampilan sisi klien dengan infrastruktur titik akhir backend.1 Pemisahan Separation of Concerns diatur melalui hierarki map pohon: map app/ untuk konfigurasi logika perutean halaman, map components/ui murni untuk kerangka grafis visual presentasi, dan map lib/ untuk menyimpan abstraksi utilitas skrip pengurai (parser) komputasi URL eksternal.1
+	Menyediakan konvensi peta navigasi internal bagi pemrosesan memori spasial agen. Memastikan mesin AI tidak menggabungkan atau mencemari abstraksi skrip pengurai utilitas internal URL rumit langsung ke dalam file halaman Component JSX tingkat pengguna, menjaga portabilitas modular struktur rekayasa.
+	Cetak Biru Anatomi Komponen Antarmuka Grafis
+	Mewajibkan injeksi infrastruktur perpustakaan ekosistem Pragmatis Shadcn UI.1 Elemen antarmuka spesifik halaman direpresentasikan sebagai pohon komponen modular:
+
+
+- Komponen Tampilan Utama /tracker: PityProgressIndicator menggunakan elemen visual progress bar Shadcn; ConveneTypeTabs mengelola sistem sakelar navigasi (Karakter Promosi, Karakter Standar, Senjata); HistoryDataTable memanfaatkan integrasi penyortiran memori tabel padat untuk menyorot secara kondisional persentil warna tabel dari karakter 5 bintang yang diklasifikasi (merah untuk rasio tarik di atas status ambang soft pity).
+
+
+- Komponen Manajemen /import: PlatformTabsGroup (membedakan instruksi khusus Android, Mode Pesawat vs Skrip Pihak Ketiga Ascent) 13; UrlInputField dengan abstraksi validasi formulir deterministik ekspresi reguler domain.10
+	Mewajibkan pemanfaatan pustaka kelas utilitas terpusat (Utility classes). Kepatuhan mutlak agen terhadap konfigurasi blok sistem elemen Tailwind CSS mencegah komplikasi penataan gaya acak atau halusinasi referensi berkas file CSS tingkat luar (External CSS file rendering failures).
+	Topologi Manajemen Status Sisi Klien (State Management)
+	Penanganan transmisi arus pengikatan data eksternal menggunakan model abstraksi sinkronisasi TanStack Query (React Query) untuk menangkap eksekusi asinkron dari API Kuro.1 Cache penyimpanan waktu nyata dieksekusi secara lokal; sementara fungsi sakelar navigasi (seperti Toggle spanduk atau Dropdown preferensi OS eksekusi) ditangani menggunakan manajemen tingkat komponen terisolasi murni seperti implementasi penyedia React Context API atau zustand untuk jejak penyimpanan lokal browser.1
+	Menekan kesalahan kondisi logika pertukaran asinkron sirkular (race conditions). Peringatan pengekangan operasional ini mencegah agen komputasi raksasa dari merancang arsitektur logika beban manajemen status Redux yang masif secara tak wajar yang berlebihan bagi mekanisme mikro aplikasi ekstraksi utilitas data.
+	Matriks Strategi Eksekusi Frontend-First
+	Rencana bertahap dipaksakan. Agen diwajibkan melakukan UI Slicing kerangka grafis elemen Shadcn secara terisolasi.1 Operasional rekayasa layout responsif harus disemai dengan referensi murni Data Dummy statis—misalnya struktur objek tiruan file JSON muatan Wuthering Waves untuk probabilitas fiktif—sebelum agen diizinkan mengalihkan sumber daya pemrosesan pemikirannya pada interaksi resolusi perutean server API yang kompleks.1
+	Menghindari benturan batas kelebihan muatan operasi agen penalaran kognitif (context limit overload) di dalam IDE Anti Gravity, menjaga AI berfokus penuh memastikan respons rendering kesempurnaan penataan gaya penempatan CSS terlebih dahulu.
+	Fase III: Formulasi Technical Specification Document (TSD)
+Apabila FSD memandu agen untuk merancang presentasi visual penahan probabilitas, Technical Specification Document (TSD) merupakan dokumen cetak biru tingkat militer yang merepresentasikan ketegasan tanpa kompromi.1 Dokumen ini didesain khusus bagi model AI dengan arsitektur eksekusi tulang punggung yang berperingkat tertinggi (seperti implementasi keluarga Claude 3.5 Sonnet).1 Topologi ini mengamankan integritas sistem, mengelola skema basis data persisten PostgreSQL, relasi migrasi skrip URL Android/Windows, dan manajemen pengamanan siklus pendaftaran berbasis surel.7
+Secara krusial, dokumen FSD dan TSD mengatasi batasan intrinsik cut-off limit AI (batas cut-off pengetahuan di mana AI dilatih) dengan mempekerjakan Model Context Protocol (MCP).1 Sebelum agen menghasilkan arsitektur relasional, sistem Retrieval-Augmented Generation (RAG) server MCP dipaksa menanyakan dan memberikan dokumentasi integrasi API komponen Backend terkini untuk mencegah insiden pengodean menggunakan baris basis fungsi usang (deprecated endpoint hallucination).1 Formulasi acuan statis API kontrak backend-plan.md dikonfigurasikan di bawah.
+
+
+Elemen Spesifikasi TSD
+	Rasionalisasi Tulang Punggung Server dan Mekanika Algoritme
+	Parameter Pengendalian Skema Agen AI
+	Arsitektur Tumpukan Basis Data Relasional yang Kaku
+	Integrasi sistem penyimpanan PostgreSQL untuk menjamin penyelesaian kueri transaksi padat, dimediasi oleh protokol objek berelasi generasi modern: Drizzle ORM.1 Skema Drizzle dan pemanggilan mutasi kueri dikemas sepenuhnya di dalam resolusi TypeScript untuk menangkal insiden fatal pelanggaran kompilasi tipe (Type-safe enforcement).1 Integrasi otorisasi pertukaran identitas mengamanatkan kerangka arsitektur prapaket otomatis Better Auth untuk menangani fungsionalitas pengikatan tautan identitas tautan Surel tanpa menjejalkan lubang celah kerentanan penyusupan sesi memori keamanan.1
+	Penetapan Sumber Kebenaran matematis operasional mutlak. Agen dideklarasikan untuk tidak boleh sekali pun mengeskpresikan fungsi perutean SQL mentah string (raw SQL Injection syntax) secara otonom dalam operasi resolusi penulisan penyimpanan data riwayat transaksi entitas yang masuk.
+	Struktur Topologi Entitas Skema Relasi (Drizzle DDL)
+	Pembentukan hierarki cetak biru pemodelan skema Drizzle Schema schema.ts diatur melalui tiga tabel kardinal utama:
+
+
+1. Struktur Tabel Induk users: Entri kunci primer unik (id tipe integer serial), identitas string rute email, rute autentikasi sesi.35
+
+
+2. Entitas Pemetaan Metadata profiles: Mereferensikan kunci tamu terhadap ID Pengguna, memuat simpul parameter player_id (UID permainan) dan zona regional server geolokasi svr_id.6
+
+
+3. Entitas Sinkronisasi Relasional Agregat Raksasa pulls: Relasi hierarki satu-ke-banyak dengan referensi induk player_id. Parameter mendefinisikan struktur muatan resolusi format JSON WuWa Tracker, termasuk indeks acuan log record_id, pembedaan string kualitas entitas (Rarity: Tingkat bintang 3/4/5), identifikasi label (Weapon/Character), metrik komputasi iterasi hitungan probabilitas jaminan akhir otomatis (pity_count), serta jejak rekam cap waktu Unix resolusi komputasi historis presisi (Time stamp array).23
+
+
+Manajemen pembaruan diatur via fungsionalitas CLI drizzle-kit pull otomatis yang mentranskripsi revisi arsitektur ke struktur pangkalan data murni melalui modifikasi baris basis kode tipe skema sistem operasi lokal.36
+	Mengeliminasi ruang asimetri ketidakkonsistenan variabel tipe. Kehadiran kerangka batasan konseptual terperinci DDL Drizzle ORM dalam matriks ini membimbing ketelitian agen AI untuk menggenerasi skrip baris migrasi tanpa menelusuri ke dalam deviasi cacat rancangan kueri integritas parameter referensi silang atribut fiksi algoritme relasi ganda fiksi struktural.
+	Kontrak Negosiasi Titik Akhir Komunikasi Server-Sisi Klien (The API Contract)
+	Mengikat resolusi asinkron fungsi transmisi modul UI Frontend dari Next.js Server Actions menuju pangkalan Server API Backend melalui definisi kontrak data muatan JSON payload definitif.
+
+
+Fungsionalitas Perutean Pengurai 1 (POST /api/v1/import/parse):
+
+
+Permintaan rute menerima string URL mentah Wuthering Waves (baik dari penangkapan papan klip memori Windows PowerShell klien otomatis import.ps1, parameter interupsi manual koneksi peramban eksternal Android Mode Pesawat, transmisi teks Client.log, atau injeksi proksi latar belakang aplikasi port perantara jaringan Ascent v2.1.6). Prosedur mengekstraksi otentikasi sementara token batas player_id dan record_id parameter untuk melakukan abstraksi manipulasi fetch antarmuka pemanggilan server proksi yang membentur titik akhir domain backend Kuro Games pusat.6 Operasi menghasilkan konversi standar file tunggal matriks data histori probabilitas dalam struktur penamaan wuwatracker-pulls.json.25
+
+
+Fungsionalitas Sinkronisasi Rekam 2 (POST /api/v1/sync):
+
+
+Mentransmisikan arsitektur format muatan file respon keluaran matriks dan mengeksekusi operasi Upsert penimpaan komputasi pembaruan silang Drizzle di baris basis entitas relasional persisten DDL PostgreSQL tanpa korupsi.21
+	Meniadakan disonansi algoritme pertukaran memori struktur operasional antar model komputasi yang bekerja di dua sisi hierarki tumpukan aplikasi. Representasi yang kaku mendikte pemahaman ekspektasi transmisi input dan tanggapan output, mengamankan arsitektur dari benturan komplikasi komunikasi rute komunikasi protokol transfer inter-sistemik jaringan pengujian simulasi otonom IDE.
+	Analisis Mekanika Metodologi Injeksi Eksternal Lanjutan dan Rekayasa Uji Log Kesalahan
+Selain membangun antarmuka web, WuWa Tracker mendistribusikan prosedur fungsional logistik ekstraksi di luar peramban yang menuntut keakuratan protokol TSD.
+Analisis Forensik Ekstraksi Skrip Otomasi Windows (import.ps1) Skrip ini beroperasi dengan memanggil utilitas baris perintah menggunakan struktur eksekusi dasar prapaket antarmuka Invoke-WebRequest untuk mengunduh pustaka instruksi.11 TSD memandu AI untuk merancang rutinitas parameter pengulangan pencarian yang menelusuri penugasan pohon memori instalasi variabel direktori jalur utama, melacak pangkalan permainan untuk memindai simpul baris basis file tekstual sasaran seperti Client.log dan merestorasi penemuan titik parameter target string dengan pencocokan abstraksi penguraian Regex pada baris basis URL spesifik aki-game.net secara komputasi lokal, aman dari pemantauan deteksi server perlindungan anti peretasan sistem (anti-cheat bypass).3
+Integrasi Infrastruktur Vektor Ekstraksi Jaringan Paralel Android (Ascent Proxy & Log Sandboxing) Pemecahan kendali isolasi pembatasan otorisasi penyimpanan partisi moderen Scoped Storage memandatkan eksekusi tiga solusi logistik operasional terpisah di halaman antarmuka platform=android.12 AI diinstruksikan untuk mendokumentasikan instruksi panduan langkah di antarmuka klien bagi fungsionalitas peramban intersepsi eksternal. Metode log manual meminta klien berinteraksi dengan alat ADB untuk menyalin Android/data/com.kurogame.wutheringwaves.global/files/UE4Game/Client/Client/Saved/Logs/Client.log yang lantas disuntikkan secara mentah untuk merangsang abstraksi fungsi pengurai parse komputasi di sisi server (Backend Server File Parser).12 Sementara metodologi paling mumpuni melibatkan pemanfaatan eksternal utilitas intersepsi Jaringan Pribadi (VPN Certificate Tunneling) dengan peluncuran paket portabilitas Android Ascent v2.1.6.18 Aplikasi pasif Ascent ini berfungsi sebagai titik persimpangan man-in-the-middle lokal untuk memecahkan enkripsi dekripsi muatan jabat tangan sesi URL langsung dari memori transmisi latar belakang komunikasi gacha permainan menuju server jarak jauh.13
+Sistem Rekayasa Putaran Penelusuran Kesalahan Mandiri (Autonomous Log-Based Debugging Loop) Penyelesaian akhir dari siklus pengembangan kecerdasan komputasi AI ini memberlakukan doktrin perbaikan otomatis. Dalam skenario umum evolusi pembaruan klien permainan oleh Kuro Games di mana rute pemanggilan URL atau arsitektur struktur hierarki tanggapan JSON record_id mungkin dimutasi, fungsi perutean pemetaan matriks otomatis ekstraksi WuWa Tracker di dalam IDE komputasi utama mungkin terhenti dengan melempar parameter kode penolakan galat HTTP (contoh: galat server tidak diotorisasi 401 Unauthorized karena struktur token expiration decay).1
+Metodologi TSD menetapkan keharusan bahwa insinyur manusia cukup menyalin tumpukan teks tumpukan rantai jejak balik kesalahan penelusuran asinkron (stack trace error log output), serta rujukan pada dokumentasi protokol batasan konteks model pembaruan eksternal, dan mengembalikannya ke layar tampilan agen pemroses (Agent View). Berkat visibilitas absolut ke dalam sumber kebenaran dokumen (PRD, FSD, TSD), agen penalaran sintesis arsitektural secara heuristik memodifikasi rutinitas logika perutean titik akhir server, merangkai skenario penyelesaian kueri parameter Upsert yang terhambat pada pangkalan relasi basis data Drizzle, dan menerbitkan solusi arsitektur tambalan kueri API tanpa operator perangkat lunak menelusuri kerumitan pengodean rute secara manual (Self-Healing Debugging).1
+Sintesis Konklusi Implementasi Arsitektural Ekosistem
+Operasionalisasi utilitas agregator dan pelacak batas probabilitas permainan seperti WuWa Tracker mengekspos kebutuhan akan komputasi pengodean yang sangat interkoneksi, mulai dari abstraksi injeksi persilangan sistem klien operasi lokal Windows dan eksekusi memintas pembatasan isolasi keamanan Android, menuju perutean pengelolaan status data asinkron inter-sistemik dengan otentikasi pencadangan relasional server yang tahan uji secara berkesinambungan.
+Transmutasi kerangka interaksi spesifikasi rekayasa konteks perangkat lunak ini menjadi model matriks statis arsitektur—melalui penyusunan fungsional Project Requirements Document (PRD) sebagai pengekang visibilitas fitur konseptual, penetapan perumusan arsitektur presentasi dan abstraksi visual dalam Functional Specification Document (FSD), serta penyegelan topologi operasional pertukaran server dan ketegasan mutasi basis data relasional di dalam Technical Specification Document (TSD)—menyediakan fondasi deterministik bagi orkestrasi penuh oleh infrastruktur agen kecerdasan buatan. Model arsitektur ini meminimalkan ambiguitas operasional, menolak kemungkinan defleksi arsitektur penyimpangan penalaran yang tidak berdasar dari agen bahasa pemrosesan LLM besar, sekaligus meletakkan blok fondasi kode stabilitas persisten (Continuous Integration/Continuous Deployment - CI/CD) yang kokoh dalam mengatasi tuntutan skalabilitas dari integrasi masa depan bagi evolusi konstelasi ekosistem pangkalan agregasi metrik probabilitas statistik permainan elektronik moderen secara berkelanjutan.
+Karya yang dikutip
+1. Rancangan Dokumen AI Coding Workflow.docx
+2. Wuthering Waves Wish Tracker with Luck Stats using Your Convene History - Reddit, diakses April 9, 2026, https://www.reddit.com/r/WutheringWaves/comments/1dnamph/wuthering_waves_wish_tracker_with_luck_stats/
+3. Get Wuthering Waves Convene History URL - GitHub Gist, diakses April 9, 2026, https://gist.github.com/Luzefiru/19c0759bea1b9e7ef480bb39303b3f6c
+4. Wuthering Waves Soft Pity Explained: How It Works and How to Maximize Your Pulls, diakses April 9, 2026, https://www.topuplive.com/news/wuthering-waves-soft-pity.html
+5. I need helping understanding the Pity system : r/WutheringWaves - Reddit, diakses April 9, 2026, https://www.reddit.com/r/WutheringWaves/comments/1qlpsvk/i_need_helping_understanding_the_pity_system/
+6. How to Fix Wuthering Waves Pull History Issues: Missing Records, Import Errors, and Recovery Tips | WuWa Tracker, diakses April 9, 2026, https://wuwatracker.com/articles/how-to-fix-wuthering-waves-pull-history-issues
+7. Impor Riwayat Pull | Aplikasi Sumber Daya & Pendamping ..., diakses April 9, 2026, https://wuwatracker.com/id/import
+8. wuwatracker/import.ps1 at main · wuwatracker/wuwatracker · GitHub, diakses April 9, 2026, https://github.com/wuwatracker/wuwatracker/blob/main/import.ps1
+9. Question about wuwatracker : r/WutheringWaves - Reddit, diakses April 9, 2026, https://www.reddit.com/r/WutheringWaves/comments/1gd72iw/question_about_wuwatracker/
+10. Import Tutorial | Wuthering Waves Resource & Companion App - WuWa Tracker, diakses April 9, 2026, https://wuwatracker.com/import
+11. Anubhav1603/Wuthering-Waves-Convene-URL-Extractor - GitHub, diakses April 9, 2026, https://github.com/Anubhav1603/Wuthering-Waves-Convene-URL-Extractor
+12. Mobile-WuWa-Config/README.md at main - GitHub, diakses April 9, 2026, https://github.com/Arglax/Mobile-WuWa-Config/blob/main/README.md
+13. Impor Riwayat Pull | Aplikasi Sumber Daya & Pendamping ..., diakses April 9, 2026, https://wuwatracker.com/id/import?platform=android
+14. Impor Riwayat Pull | Aplikasi Sumber Daya & Pendamping Wuthering Waves | WuWa Tracker, diakses April 9, 2026, https://wuwatracker.com/id/import?platform=android&method=log
+15. Those who got S6 on a character, how much did it cost you? : r/WutheringWaves - Reddit, diakses April 9, 2026, https://www.reddit.com/r/WutheringWaves/comments/1l1tplx/those_who_got_s6_on_a_character_how_much_did_it/
+16. I came.... with updated configs : r/WutheringWavesGuide - Reddit, diakses April 9, 2026, https://www.reddit.com/r/WutheringWavesGuide/comments/1ryb8zo/i_came_with_updated_configs/
+17. Importer | Application de ressources et compagnon Wuthering Waves - WuWa Tracker, diakses April 9, 2026, https://wuwatracker.com/fr/import?platform=android&method=log
+18. i18n/en.json at main · wuwatracker/i18n - GitHub, diakses April 9, 2026, https://github.com/wuwatracker/i18n/blob/main/en.json
+19. Releases · 4o3F/Ascent - GitHub, diakses April 9, 2026, https://github.com/4o3F/Ascent/releases
+20. How to Play Wuthering Waves With Rooted Device (Version 2.1) - YouTube, diakses April 9, 2026, https://www.youtube.com/watch?v=_VuWUPvy-wM
+21. WuWa Pull Tracker — Local Edition - GitHub, diakses April 9, 2026, https://github.com/Ikram001/wuwa-pull-tracker-local
+22. Module:JSON - Wuthering Waves Wiki - Fandom, diakses April 9, 2026, https://wutheringwaves.fandom.com/wiki/Module:JSON
+23. wuwaconvene - PyPI, diakses April 9, 2026, https://pypi.org/project/wuwaconvene/
+24. Cloud Sync has been added to WuWaPal.com (Pull Tracker) : r/WutheringWaves - Reddit, diakses April 9, 2026, https://www.reddit.com/r/WutheringWaves/comments/1djp264/cloud_sync_has_been_added_to_wuwapalcom_pull/
+25. WuWa Tracker v4 Migration Guide | Wuthering Waves Resource & Companion App, diakses April 9, 2026, https://wuwatracker.com/articles/wuwatracker-v4-migration-guide
+26. Daily Questions Megathread - January 25, 2025 : r/WutheringWaves - Reddit, diakses April 9, 2026, https://www.reddit.com/r/WutheringWaves/comments/1i9cdgt/daily_questions_megathread_january_25_2025/
+27. Pelacak Pull | Aplikasi Sumber Daya & Pendamping Wuthering ..., diakses April 9, 2026, https://wuwatracker.com/id/tracker
+28. Male Rover Wuthering Waves Color Palette, diakses April 9, 2026, https://www.color-hex.com/color-palette/1046921
+29. The font files for WuWa's fictional script/alphabet ("Solaris-3 Script") - Reddit, diakses April 9, 2026, https://www.reddit.com/r/WutheringWaves/comments/1fj6vgk/the_font_files_for_wuwas_fictional_scriptalphabet/
+30. Getting Started: Project Structure | Next.js, diakses April 9, 2026, https://nextjs.org/docs/app/getting-started/project-structure
+31. Simplest way to build CRUD App (Next.js 15, Shadcn, Drizzle, TypeScript) - YouTube, diakses April 9, 2026, https://www.youtube.com/watch?v=sVy46ocQT-E
+32. Schema - Drizzle ORM, diakses April 9, 2026, https://orm.drizzle.team/docs/sql-schema-declaration
+33. Building a Modern CRUD Application with Next.js 15: Drizzle, Neon, and Shadcn UI Guide, diakses April 9, 2026, https://medium.com/@ozgurclub/building-a-modern-crud-application-with-next-js-15-drizzle-neon-and-shadcn-ui-guide-7d8aced24da6
+34. WuWa Tracker v4.0-beta | Wuthering Waves Resource & Companion App, diakses April 9, 2026, https://wuwatracker.com/articles/wuwatracker-v4-release-notes
+35. Schemas - Drizzle ORM, diakses April 9, 2026, https://orm.drizzle.team/docs/schemas
+36. drizzle-kit pull, diakses April 9, 2026, https://orm.drizzle.team/docs/drizzle-kit-pull

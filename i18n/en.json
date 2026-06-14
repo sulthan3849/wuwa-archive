@@ -1,0 +1,307 @@
+{
+  "common": {
+    "appName": "Wuwa Archive",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "clear": "Clear",
+    "export": "Export",
+    "import": "Import",
+    "settings": "Settings",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "retry": "Retry",
+    "copied": "Copied!",
+    "copy": "Copy"
+  },
+  "nav": {
+    "tracker": "Tracker",
+    "import": "Import",
+    "settings": "Settings",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
+  "landing": {
+    "title": "Welcome to Wuwa Archive",
+    "subtitle": "Local-First Pull Tracker & Analytics for Wuthering Waves",
+    "cta": "Start Tracking",
+    "features": {
+      "privacy": {
+        "title": "Local-First Privacy",
+        "description": "Your data stays in your browser. We never store anything on our servers."
+      },
+      "pity": {
+        "title": "Pity Tracking",
+        "description": "Track your pity counter and know exactly when your next 5★ is coming."
+      },
+      "stats": {
+        "title": "Pull Statistics",
+        "description": "Analyze your pulling patterns with detailed statistics and charts."
+      },
+      "export": {
+        "title": "Export & Import",
+        "description": "Your data, your control. Export anytime, import anywhere."
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1": "Run the PowerShell script to extract your Convene URL",
+      "step2": "Paste the URL and import your pull history",
+      "step3": "View your stats, track your pity, and analyze your luck"
+    },
+    "ctaSecondary": "Import Your Data Now"
+  },
+  "tracker": {
+    "title": "Convene Tracker",
+    "profile": "Profile",
+    "noData": "No Data Found",
+    "noDataDescription": "Import your pull history to get started!",
+    "goToImport": "Go to Import",
+    "totalPulls": "Total Pulls",
+    "pity": "Pity",
+    "avgPity": "Average Pity",
+    "pullRatio": "Pull Ratio",
+    "fiftyFifty": "50/50 Tracker",
+    "guaranteeActive": "Guarantee Active",
+    "noFiftyFifty": "No 50/50 data yet",
+    "getFirstFiveStar": "Get your first 5★ to start tracking!",
+    "winRate": "Win Rate",
+    "wins": "Wins",
+    "losses": "Losses",
+    "luckStatus": {
+      "lucky": "Lucky",
+      "average": "Average",
+      "unlucky": "Unlucky"
+    },
+    "emptyState": {
+      "title": "No pull data for this banner",
+      "description": "You haven't pulled on this banner yet."
+    },
+    "onboarding": {
+      "title": "No Data Yet",
+      "description": "Import your first pull to get started!",
+      "cta": "Import Pull History"
+    },
+    "pityStatus": {
+      "safe": "Safe",
+      "caution": "Caution",
+      "danger": "Danger"
+    },
+    "table": {
+      "pullNumber": "#",
+      "item": "Item",
+      "type": "Type",
+      "pity": "Pity",
+      "time": "Time",
+      "resonator": "Resonator",
+      "weapon": "Weapon"
+    },
+    "stats": {
+      "fiveStars": "5★",
+      "fourStars": "4★",
+      "threeStars": "3★",
+      "totalFiveStars": "Total 5★",
+      "averagePityDescription": "Average pulls needed for a 5★"
+    },
+    "serverReset": "Server Reset in"
+  },
+  "import": {
+    "title": "Import Pull History",
+    "subtitle": "Choose your platform to get started",
+    "platform": {
+      "windows": "Windows",
+      "android": "Android"
+    },
+    "windows": {
+      "instructions": {
+        "title": "How to get your Convene URL",
+        "step1": "Open Wuthering Waves game",
+        "step2": "Open Convene History (pull history) in the game",
+        "step3": "Open PowerShell, paste the command below, and press Enter"
+      },
+      "powershell": {
+        "title": "PowerShell Command",
+        "copied": "Command copied!"
+      },
+      "or": "OR",
+      "uploadLog": {
+        "title": "Upload Client.log",
+        "description": "Drag and drop your Client.log file here, or click to browse",
+        "fileLocation": "File location: [Game]\\Client\\Saved\\Logs\\Client.log",
+        "maxSize": "Maximum file size: 5MB"
+      }
+    },
+    "android": {
+      "instructions": {
+        "title": "How to get your Convene URL on Android",
+        "step1": "Open Wuthering Waves on Android",
+        "step2": "Open Convene History in the game",
+        "step3": "Wait for the page to fully load",
+        "step4": "Enable Airplane Mode",
+        "step5": "Switch to another banner tab - the page will show an ERROR",
+        "step6": "Long press on the URL in the error page and copy it"
+      }
+    },
+    "urlInput": {
+      "placeholder": "Paste Convene URL here...",
+      "valid": "URL is valid",
+      "invalid": "URL is not from Convene History",
+      "empty": "Please paste your Convene URL"
+    },
+    "importButton": "Import Data",
+    "importing": "Importing...",
+    "progress": {
+      "fetching": "Fetching {banner}...",
+      "complete": "Import complete!",
+      "total": "Total: {count} pulls from {banners} banners"
+    },
+    "errors": {
+      "tokenExpired": "URL has expired. Open Convene History in the game and run the script again to get a new URL.",
+      "networkError": "Unable to connect to the server. Please check your internet connection and try again.",
+      "invalidUrl": "URL is not valid. Make sure the URL is from the Convene History page in the game.",
+      "rateLimited": "Too many requests. Please try again in {seconds} seconds.",
+      "serverError": "The game server is having issues. Please try again later.",
+      "noData": "No pull data found for this banner. This is normal if you haven't pulled on this banner yet."
+    },
+    "success": {
+      "title": "Import Successful!",
+      "message": "Successfully imported {count} pulls from {banners} banners.",
+      "redirecting": "Redirecting to tracker..."
+    },
+    "summary": {
+      "success": "{successCount}/{totalCount} banners imported successfully",
+      "failed": "{failedCount} banner(s) failed"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your profile and data.",
+    "profile": {
+      "title": "Active Profile",
+      "description": "Your current player profile.",
+      "playerUid": "Player UID",
+      "server": "Server",
+      "totalPulls": "Total Pulls",
+      "lastImport": "Last Import",
+      "never": "Never",
+      "noProfile": "No profile data. Import your pull history first."
+    },
+    "dataManagement": {
+      "title": "Data Management",
+      "description": "Export your data for backup, or import an existing archive.",
+      "export": {
+        "button": "Export JSON",
+        "success": "Data exported successfully!",
+        "error": "Export failed"
+      },
+      "import": {
+        "button": "Import JSON",
+        "success": "Import successful!",
+        "error": "Import failed",
+        "newRecords": "New records",
+        "duplicates": "Duplicates"
+      }
+    },
+    "dangerZone": {
+      "title": "Danger Zone",
+      "description": "Permanently delete all local data.",
+      "clearButton": "Clear All Data",
+      "confirmTitle": "Are you sure?",
+      "confirmMessage": "All pull data for UID {uid} will be permanently deleted from this browser. This action cannot be undone.",
+      "confirmDelete": "Confirm Delete",
+      "success": "All data cleared successfully",
+      "error": "Failed to clear data"
+    }
+  },
+  "fiftyFifty": {
+    "title": "50/50 Tracker",
+    "wins": "Wins",
+    "losses": "Losses",
+    "winRate": "Win Rate",
+    "guarantee": "GUARANTEE",
+    "active": "Guarantee Active",
+    "inactive": "50/50 Active",
+    "noData": "No 50/50 data yet",
+    "getFirstFiveStar": "Get your first 5★ to start tracking!"
+  },
+  "toast": {
+    "exportSuccess": "Data exported successfully!",
+    "exportError": "Failed to export data",
+    "importSuccess": "Import successful!",
+    "importError": "Failed to import data",
+    "clearSuccess": "Data cleared successfully",
+    "clearError": "Failed to clear data",
+    "profileSwitch": "Switched to profile {uid}",
+    "copySuccess": "Copied to clipboard!",
+    "copyError": "Failed to copy"
+  },
+  "footer": {
+    "disclaimer": "Wuwa Archive — Not affiliated with Kuro Games",
+    "version": "Version"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "effectiveDate": "Effective Date",
+    "sections": {
+      "dataCollection": "Data Collection",
+      "dataCollectionText": "We do NOT collect any personal data. All your pull history data is stored locally in your browser's IndexedDB and is never transmitted to our servers.",
+      "localStorage": "Local Storage",
+      "localStorageText": "All data is stored in your browser. You have full control over your data and can delete it at any time from the Settings page.",
+      "proxyServer": "Proxy Server",
+      "proxyServerText": "Our server only acts as a thin proxy to fetch data from the Kuro Games API. We do not store, log, or retain any data that passes through our server.",
+      "cookies": "Cookies",
+      "cookiesText": "We only use cookies for UI preferences such as theme (dark/light mode) and language settings. No tracking cookies or analytics cookies are used.",
+      "thirdParty": "Third-Party Services",
+      "thirdPartyText": "We do not use any third-party analytics or tracking services. There are no Google Analytics, Mixpanel, or similar tools on this website.",
+      "dataDeletion": "Data Deletion",
+      "dataDeletionText": "You can delete all your data at any time from the Settings page. Clearing your browser data will also remove all stored information."
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "effectiveDate": "Effective Date",
+    "sections": {
+      "disclaimer": "Disclaimer",
+      "disclaimerText": "Wuwa Archive is not affiliated with, endorsed by, or connected to Kuro Games or Wuthering Waves in any way. This is an independent, open-source project created by fans for fans.",
+      "noWarranty": "No Warranty",
+      "noWarrantyText": "The service is provided \"as is\" without warranty of any kind. We do not guarantee the accuracy of data or uninterrupted service.",
+      "dataAccuracy": "Data Accuracy",
+      "dataAccuracyText": "We make reasonable efforts to ensure data accuracy, but we cannot guarantee that all pull records are captured or that statistics are 100% accurate.",
+      "accountSafety": "Account Safety",
+      "accountSafetyText": "Our PowerShell script only reads log files and does not modify any game files. It cannot be used to gain advantages or compromise account security.",
+      "openSource": "Open Source",
+      "openSourceText": "The source code is available on GitHub under the GPL-3.0 license. You are welcome to audit the code for transparency.",
+      "userResponsibility": "User Responsibility",
+      "userResponsibilityText": "You are responsible for keeping your data backups safe. While we implement deduplication, we recommend regular exports of your data."
+    }
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "network": "Network error. Please check your connection.",
+    "notFound": "Page not found",
+    "serverError": "Server error. Please try again later."
+  },
+  "time": {
+    "justNow": "Just now",
+    "minutesAgo": "{count} minute(s) ago",
+    "hoursAgo": "{count} hour(s) ago",
+    "daysAgo": "{count} day(s) ago",
+    "weeksAgo": "{count} week(s) ago",
+    "monthsAgo": "{count} month(s) ago"
+  },
+  "banners": {
+    "1": "Novice Convene",
+    "2": "Permanent Resonator",
+    "3": "Permanent Weapon",
+    "4": "Featured Resonator",
+    "5": "Featured Weapon",
+    "6": "Beginner's Choice",
+    "7": "New Voyage Resonator",
+    "8": "New Voyage Weapon"
+  }
+}
